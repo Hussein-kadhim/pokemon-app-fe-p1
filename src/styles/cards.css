@@ -1,0 +1,84 @@
+/* Pokémon Grid & Kaarten */
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.pokemon-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-image-box {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.card-image-box img {
+  max-height: 110px;
+  max-width: 110px;
+}
+
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.card-num {
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+.btn-card {
+  margin-top: auto;
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  font-size: 13px;
+  color: #475569;
+  text-decoration: none;
+}
+
+/* Favorieten Hartje Knop */
+.heart-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border-input);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-light);
+}
+
+.heart-btn.active {
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-border);
+}

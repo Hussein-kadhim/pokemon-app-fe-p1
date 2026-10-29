@@ -1,0 +1,48 @@
+/* Header, Navigatie & Footer */
+.site-header {
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  padding: 14px 0;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-dark);
+}
+
+.brand i {
+  color: var(--color-primary);
+}
+
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link,
+.nav-item {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-link.active,
+.nav-item.active {
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+  font-weight: 600;
+}
+
+.site-footer {
+  background: var(--color-card);
+  border-top: 1px solid var(--color-border);
+  padding: 20px 0;
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 13px;
+  margin-top: auto;
+}
