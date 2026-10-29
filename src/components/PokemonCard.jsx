@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom';
+import FavoriteButton from './FavoriteButton';
 
-function PokemonCard({ name, image, number }) {
+function PokemonCard({ name, image, number, onFavoriteToggle }) {
   return (
     <div className="pokemon-card">
-      <div className="card-image-wrapper">
-        <img src={image} alt={name} className="card-image" />
+      <div className="card-image-box">
+        <FavoriteButton name={name} onToggle={onFavoriteToggle} />
+        <img src={image} alt={name} />
       </div>
 
-      <div className="card-content">
-        <div className="card-top-row">
-          <h3 className="pokemon-name">{name}</h3>
-          {number && <span className="pokemon-number">{number}</span>}
-        </div>
-
-        <Link to={'/pokemon/' + name.toLowerCase()} className="card-button">
-          Bekijk details
-        </Link>
+      <div className="card-title-row">
+        <span className="card-name">{name}</span>
+        {number && <span className="card-num">{number}</span>}
       </div>
+
+      <Link to={`/pokemon/${name.toLowerCase()}`} className="btn-card">
+        Bekijk details
+      </Link>
     </div>
   );
 }
