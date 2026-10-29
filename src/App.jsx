@@ -9,9 +9,9 @@ import PokemonDetail from './pages/PokemonDetail';
 function App() {
   return (
     <BrowserRouter>
-      <div>
+      <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="container" style={{ marginTop: '24px', marginBottom: '24px' }}>
+        <main className="container flex-1" style={{ marginTop: '24px', marginBottom: '24px' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/lijst" element={<Lijst />} />
