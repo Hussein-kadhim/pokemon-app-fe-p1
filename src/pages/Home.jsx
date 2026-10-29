@@ -1,122 +1,116 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import PokemonCard from '../components/PokemonCard';
 
 function Home() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [zoekterm, setZoekterm] = useState('');
+  const [favorieten, setFavorieten] = useState([]);
+  const [allePokemon, setAllePokemon] = useState([]);
   const navigate = useNavigate();
 
-  const handleSearch = (e) => {
+  // 1. Favorieten ophalen uit localStorage
+  useEffect(() => {
+    const opslag = localStorage.getItem('favorieten');
+    if (opslag) {
+      setFavorieten(JSON.parse(opslag));
+    }
+  }, []);
+
+  // 2. Alle 151 Pokémon ophalen van de API
+  useEffect(() => {
+    async function haalPokemonOp() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const data = await response.json();
+        setAllePokemon(data.results || []);
+      } catch (fout) {
+        console.error('Fout bij ophalen Pokémon:', fout);
+      }
+    }
+
+    haalPokemonOp();
+  }, []);
+
+  // Zoeken via de zoekbalk
+  const handleZoeken = (e) => {
     e.preventDefault();
-    const query = searchTerm.trim().toLowerCase().replace('#', '');
-    if (query) {
-      navigate(`/pokemon/${query}`);
+    const schoon = zoekterm.trim().toLowerCase().replace('#', '');
+    if (schoon) {
+      navigate(`/pokemon/${schoon}`);
     } else {
       navigate('/lijst');
     }
   };
 
-  const starterPokemon = [
-    {
-      id: 1,
-      number: '#001',
-      name: 'Bulbasaur',
-      type: 'Gras',
-      typeClass: 'type-grass',
-      slug: 'bulbasaur',
-      image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png'
-    },
-    {
-      id: 4,
-      number: '#004',
-      name: 'Charmander',
-      type: 'Vuur',
-      typeClass: 'type-fire',
-      slug: 'charmander',
-      image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png'
-    },
-    {
-      id: 7,
-      number: '#007',
-      name: 'Squirtle',
-      type: 'Water',
-      typeClass: 'type-water',
-      slug: 'squirtle',
-      image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png'
+  // Favorieten filteren uit de complete lijst
+  const favorietePokemon = allePokemon.filter((p) =>
+    favorieten.includes(p.name.toLowerCase())
+  );
+
+  // Als een Pokémon ont-favoriet geklikt wordt
+  const handleFavoriteToggle = (naam, isNuFavoriet) => {
+    if (!isNuFavoriet) {
+      setFavorieten((vorige) => vorige.filter((item) => item !== naam.toLowerCase()));
     }
-  ];
+  };
 
   return (
-    <div className="home-page">
-      {/* Hero card section */}
-      <section className="hero-section">
-        <div className="hero-card">
-          <h1 className="hero-title">Kanto Pokédex</h1>
-          <p className="hero-subtitle">
-            Een overzichtelijke gids voor de originele 151 Pokémon.
-          </p>
+    <div>
+      <section className="hero-card">
+        <h1 className="hero-title">Kanto Pokédex</h1>
+        <p className="hero-subtitle">
+          Een overzichtelijke gids voor de originele 151 Pokémon.
+        </p>
 
-          <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              placeholder="Zoek op naam of nummer (bijv. #001)..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-            <button type="submit" className="btn-search">
-              <i className="fa-solid fa-magnifying-glass"></i> Zoeken
-            </button>
-          </form>
+        <form onSubmit={handleZoeken} className="search-form">
+          <input
+            type="text"
+            placeholder="Zoek op naam of nummer (bijv. #001)..."
+            value={zoekterm}
+            onChange={(e) => setZoekterm(e.target.value)}
+            className="search-input"
+          />
+          <button type="submit" className="btn-search">
+            <i className="fa-solid fa-magnifying-glass"></i> Zoeken
+          </button>
+        </form>
 
-          <div className="hero-actions">
-            <Link to="/lijst" className="btn-primary">
-              Bekijk alle Pokémon
-            </Link>
-          </div>
-        </div>
+        <Link to="/lijst" className="btn-primary">
+          Bekijk alle Pokémon
+        </Link>
       </section>
 
-      {/* Starter Pokémon section */}
-      <section className="starter-section">
-        <div className="section-header">
-          <h2 className="section-title">Starter Pokémon</h2>
-          <hr className="section-line" />
-        </div>
+      <section>
+        <h2 className="section-title">
+          <i className="fa-solid fa-heart" style={{ color: '#ef4444' }}></i> Mijn Favoriete Pokémon
+        </h2>
+        <hr className="section-line" />
 
-        <div className="starter-grid">
-          {starterPokemon.map((poke) => (
-            <div key={poke.id} className="pokemon-card starter-card">
-              <div className="card-image-wrapper">
-                <img
-                  src={poke.image}
-                  alt={poke.name}
-                  className="card-image"
-                  loading="lazy"
+        {favorietePokemon.length === 0 ? (
+          <div className="hero-card" style={{ maxWidth: '100%' }}>
+            <p className="hero-subtitle" style={{ marginBottom: 0 }}>
+              Je hebt nog geen favoriete Pokémon. Klik op het hartje bij een Pokémon om deze toe te voegen!
+            </p>
+          </div>
+        ) : (
+          <div className="pokemon-grid">
+            {favorietePokemon.map((pokemon) => {
+              const urlDelen = pokemon.url.split('/').filter(Boolean);
+              const id = urlDelen[urlDelen.length - 1];
+              const afbeelding = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+
+              return (
+                <PokemonCard
+                  key={pokemon.name}
+                  name={pokemon.name}
+                  image={afbeelding}
+                  number={`#${String(id).padStart(3, '0')}`}
+                  onFavoriteToggle={handleFavoriteToggle}
                 />
-              </div>
-
-              <div className="card-content">
-                <div className="card-top-row">
-                  <h3 className="pokemon-name">{poke.name}</h3>
-                  <span className="pokemon-number">{poke.number}</span>
-                </div>
-
-                <div className="card-badge-row">
-                  <span className={`badge ${poke.typeClass}`}>
-                    {poke.type}
-                  </span>
-                </div>
-
-                <Link
-                  to={`/pokemon/${poke.slug}`}
-                  className="card-button"
-                >
-                  Bekijk details
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );
